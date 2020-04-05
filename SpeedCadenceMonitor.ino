@@ -3,13 +3,11 @@
 BLEPeripheral blePeripheral;            // BLE Peripheral Device (the board you're programming)
 
 BLEService speedcadenceService("1816"); // BLE CSC
-BLEService batteryService("180F");      // BLE battery
     
 BLECharacteristic SpeedCadenceCharacteristic("2A5B", BLERead | BLENotify, 7);  
 
 BLEUnsignedCharCharacteristic CSCFeature("2A5C", BLERead | BLENotify);
 BLEUnsignedCharCharacteristic SensorLocation("2A5D", BLERead | BLENotify);
-BLEUnsignedCharCharacteristic batteryLevelCharacteristic("2A19", BLERead | BLENotify); 
 
 long previousMillis = 0;  // last time the heart rate was checked, in ms
 
@@ -27,14 +25,11 @@ void setup() {
      The name can be changed but maybe be truncated based on space left in advertisement packet */
   blePeripheral.setLocalName("Wahoo BlueSC");
   blePeripheral.setAdvertisedServiceUuid(speedcadenceService.uuid());   // add the service UUID
-  blePeripheral.setAdvertisedServiceUuid(batteryService.uuid());        // add the service UUID
   blePeripheral.addAttribute(speedcadenceService);                      // Add the BLE csc service
-  blePeripheral.addAttribute(batteryService);                           // Add the BLE battery service
   
   speedcadenceService.addCharacteristic(SpeedCadenceCharacteristic); // add the speed Measurement characteristic
   speedcadenceService.addCharacteristic(CSCFeature);
   speedcadenceService.addCharacteristic(SensorLocation);
-  batteryService.addCharacteristic(batteryLevelCharacteristic);
   
   /* Now activate the BLE device.  It will start continuously transmitting BLE
      advertising packets and will be visible to remote BLE central devices
@@ -92,7 +87,6 @@ void updateSpeedCadence()
     unsigned char SpeedCadenceCharacteristicArray[7] = {0x01, CumWheel[0], CumWheel[1], CumWheel[2], CumWheel[3], LastWheelE[0], LastWheelE[1] };
 
     SpeedCadenceCharacteristic.setValue(SpeedCadenceCharacteristicArray, 7);      // update the speed and cadence measurement characteristic
-    batteryLevelCharacteristic.setValue(0x0055);                    // update the battery measurement characteristic
     CSCFeature.setValue(0x00);
     SensorLocation.setValue(0x0B);
 
